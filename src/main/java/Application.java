@@ -13,6 +13,7 @@ public class Application {
 
     public static void main(String[] arg) {
         try {
+            // file path to your local git location
             String filePath = "some file path";
             // yyyy/MM/dd HH:mm:ss
             String startDate = "date";
