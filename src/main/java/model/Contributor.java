@@ -32,8 +32,8 @@ public class Contributor {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contributor that = (Contributor) o;
-        return name.equals(that.name) &&
-                emailAddress.equals(that.emailAddress);
+        return name.equalsIgnoreCase(that.name) &&
+                emailAddress.equalsIgnoreCase(that.emailAddress);
     }
 
     @Override

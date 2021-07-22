@@ -2,6 +2,7 @@ package utils;
 
 import model.CommitInfo;
 import model.Contributor;
+import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.PersonIdent;
@@ -16,14 +17,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 public class CommitCounter {
 
     private static final String DATE_TIME_PATTERN = "yyyy/MM/dd HH:mm:ss";
     private static final String DEFAULT_TIME_ZONE = "GMT+7:00";
-    private DateFormat dateFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
-    private TimeZone timeZone;
+    private final DateFormat dateFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
 
     public CommitCounter() {
         dateFormat.setTimeZone(TimeZone.getTimeZone(DEFAULT_TIME_ZONE));
@@ -117,9 +118,23 @@ public class CommitCounter {
         return result;
     }
 
+    public Map<String, Integer> refineContributorList(Map<String, Integer> commits) {
+        Map<String, Integer> result = new HashMap<>();
+        JaroWinklerDistance jaroWinklerDistance = new JaroWinklerDistance();
+        Set<String> names = commits.keySet();
+        commits.forEach((contributor, totalCommit) -> {
+            names.forEach(name -> {
+                double distance = jaroWinklerDistance.apply(name, contributor);
+                if (distance > 0.7) {
+                    System.out.println(name + " - " + contributor + ": distance=" + distance);
+                }
+            });
+        });
+        return result;
+    }
+
     public void setTimeZone(TimeZone timeZone) {
-        this.timeZone = timeZone;
-        dateFormat.setTimeZone(this.timeZone);
+        dateFormat.setTimeZone(timeZone);
     }
 
     private boolean isCommitTimeBetween(Date commitDate, Date start, Date end) {

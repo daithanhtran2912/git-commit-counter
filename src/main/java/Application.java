@@ -26,6 +26,7 @@ public class Application {
             for (Map.Entry<String, Integer> contributor : totalCommits.entrySet()) {
                 System.out.println(contributor.toString());
             }
+            counter.refineContributorList(totalCommits);
         } catch (IOException | GitAPIException | ParseException e) {
             e.printStackTrace();
         }
